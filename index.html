@@ -251,41 +251,26 @@
   }
 
   /* flip card */
-  .fc-scene {
-    perspective: 1000px;
-    margin: 0 auto 24px;
-    max-width: 600px;
-    height: 280px;
-  }
-
   .fc-card {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    transform-style: preserve-3d;
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
-  }
-
-  .fc-card.flipped { transform: rotateY(180deg); }
-
-  .fc-face {
-    position: absolute;
-    width: 100%; height: 100%;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
+    max-width: 600px;
+    margin: 0 auto 24px;
     border: 1px solid var(--border);
     border-radius: 12px;
+    background: var(--surface);
+    padding: 36px 32px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    min-height: 200px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 32px;
     text-align: center;
-    background: var(--surface);
+    user-select: none;
   }
 
-  .fc-face.back { transform: rotateY(180deg); background: #0f1a2e; border-color: var(--accent); }
+  .fc-card:hover { border-color: var(--accent); }
+  .fc-card.revealed { border-color: var(--accent); background: #0f1a2e; }
 
   .fc-label {
     font-size: 11px;
@@ -295,7 +280,7 @@
     margin-bottom: 16px;
   }
 
-  .fc-face.back .fc-label { color: var(--accent); }
+  .fc-card.revealed .fc-label { color: var(--accent); }
 
   .fc-text {
     font-size: 18px;
@@ -304,10 +289,23 @@
     color: var(--text);
   }
 
+  .fc-answer {
+    display: none;
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--text);
+    margin-top: 0;
+  }
+
+  .fc-card.revealed .fc-question { display: none; }
+  .fc-card.revealed .fc-answer   { display: block; }
+  .fc-card.revealed .fc-hint     { color: var(--accent); }
+
   .fc-hint {
     font-size: 12px;
     color: var(--muted);
-    margin-top: 16px;
+    margin-top: 20px;
   }
 
   .fc-nav {
@@ -330,9 +328,6 @@
 
   .fc-nav button:hover { border-color: var(--accent); color: var(--accent); }
   .fc-nav button:disabled { opacity: 0.3; cursor: default; }
-
-  .fc-nav button.mark-good  { border-color: var(--green); color: var(--green); }
-  .fc-nav button.mark-bad   { border-color: var(--red); color: var(--red); }
 
   .fc-empty {
     text-align: center;
@@ -570,18 +565,14 @@ function renderFC() {
   const card = fcDeck[fcIndex];
 
   el.innerHTML = `
-    <div class="fc-scene">
-      <div class="fc-card" id="fc-card" onclick="flipCard()">
-        <div class="fc-face front">
-          <div class="fc-label">${card.topic} · ${card.problemTitle}</div>
-          <div class="fc-text">${card.q}</div>
-          <div class="fc-hint">click to reveal</div>
-        </div>
-        <div class="fc-face back">
-          <div class="fc-label">Answer</div>
-          <div class="fc-text">${card.a}</div>
-        </div>
+    <div class="fc-card" id="fc-card" onclick="flipCard()">
+      <div class="fc-label" id="fc-card-label">${card.topic} · ${card.problemTitle}</div>
+      <div class="fc-question">
+        <div class="fc-text">${card.q}</div>
+        <div class="fc-hint">click to reveal answer</div>
       </div>
+      <div class="fc-answer">${card.a}</div>
+      <div class="fc-hint" style="display:none" id="fc-flip-hint">click to flip back</div>
     </div>
     <div class="fc-nav">
       <button onclick="prevFC()" ${fcIndex === 0 ? 'disabled' : ''}>← Prev</button>
@@ -590,7 +581,14 @@ function renderFC() {
 }
 
 function flipCard() {
-  document.getElementById('fc-card').classList.toggle('flipped');
+  const card = document.getElementById('fc-card');
+  const revealed = card.classList.toggle('revealed');
+  const label = document.getElementById('fc-card-label');
+  const hint = document.getElementById('fc-flip-hint');
+  if (label) label.textContent = revealed
+    ? 'Answer'
+    : `${fcDeck[fcIndex].topic} · ${fcDeck[fcIndex].problemTitle}`;
+  if (hint) hint.style.display = revealed ? 'block' : 'none';
 }
 
 function nextFC() { if (fcIndex < fcDeck.length - 1) { fcIndex++; renderFC(); } }
