@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Bank</title>
+<script src="data.js"></script>
+<style>
+  :root {
+    --bg:        #0d1117;
+    --surface:   #161b22;
+    --border:    #30363d;
+    --text:      #e6edf3;
+    --muted:     #8b949e;
+    --accent:    #58a6ff;
+    --green:     #3fb950;
+    --orange:    #d29922;
+    --red:       #f85149;
+    --tag-bg:    #1f2937;
+    --radius:    8px;
+    --mono:      'JetBrains Mono', 'Fira Code', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── Layout ─────────────────────────────────────── */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 100;
+  }
+
+  header h1 {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    color: var(--text);
+  }
+
+  header h1 span { color: var(--accent); }
+
+  nav { display: flex; gap: 4px; }
+
+  nav button {
+    background: none;
+    border: 1px solid transparent;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 6px 14px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    transition: all 0.15s;
+  }
+
+  nav button:hover { color: var(--text); border-color: var(--border); }
+  nav button.active { color: var(--accent); border-color: var(--accent); background: rgba(88,166,255,0.08); }
+
+  main { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── Stats bar ───────────────────────────────────── */
+  .stats {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 32px;
+    padding: 16px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .stat-item { text-align: center; }
+  .stat-num { font-size: 24px; font-weight: 700; color: var(--accent); font-family: var(--mono); }
+  .stat-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* ── Topic index ─────────────────────────────────── */
+  .topic-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .topic-chip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .topic-chip:hover { border-color: var(--accent); }
+  .topic-chip.selected { border-color: var(--accent); background: rgba(88,166,255,0.06); }
+  .topic-chip .topic-name { font-weight: 500; font-size: 14px; }
+  .topic-chip .topic-count {
+    font-size: 12px;
+    color: var(--muted);
+    background: var(--tag-bg);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-family: var(--mono);
+  }
+
+  /* ── Problem cards ───────────────────────────────── */
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    margin-top: 32px;
+  }
+
+  .problem-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .problem-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+
+  .problem-card:hover { border-color: var(--accent); }
+
+  .problem-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .problem-title {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .problem-title:hover { text-decoration: underline; }
+
+  .problem-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  .tag {
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: var(--tag-bg);
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+
+  .tag.pattern { color: var(--green); border: 1px solid rgba(63,185,80,0.25); }
+  .tag.stuck   { color: var(--orange); border: 1px solid rgba(210,153,34,0.25); }
+  .tag.date    { color: var(--muted); }
+
+  .problem-notes {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+    border-left: 2px solid var(--border);
+    padding-left: 10px;
+    display: none;
+  }
+
+  .problem-card.expanded .problem-notes { display: block; }
+
+  .stuck-section {
+    margin-top: 10px;
+    font-size: 13px;
+    padding: 8px 12px;
+    background: rgba(210,153,34,0.08);
+    border: 1px solid rgba(210,153,34,0.2);
+    border-radius: 6px;
+    color: var(--orange);
+    display: none;
+  }
+
+  .stuck-section::before { content: "⚠ Stuck: "; font-weight: 600; }
+  .problem-card.expanded .stuck-section { display: block; }
+
+  .expand-hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* ── Flashcards ──────────────────────────────────── */
+  #flashcard-view h2 { font-size: 20px; font-weight: 600; margin-bottom: 24px; }
+
+  .fc-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+
+  .fc-controls select, .fc-controls button {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 14px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .fc-controls select:focus, .fc-controls button:hover {
+    border-color: var(--accent);
+    outline: none;
+  }
+
+  .fc-progress {
+    font-size: 13px;
+    color: var(--muted);
+    font-family: var(--mono);
+    margin-left: auto;
+  }
+
+  /* flip card */
+  .fc-scene {
+    perspective: 1000px;
+    margin: 0 auto 24px;
+    max-width: 600px;
+    height: 280px;
+  }
+
+  .fc-card {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+
+  .fc-card.flipped { transform: rotateY(180deg); }
+
+  .fc-face {
+    position: absolute;
+    width: 100%; height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    text-align: center;
+    background: var(--surface);
+  }
+
+  .fc-face.back { transform: rotateY(180deg); background: #0f1a2e; border-color: var(--accent); }
+
+  .fc-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .fc-face.back .fc-label { color: var(--accent); }
+
+  .fc-text {
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--text);
+  }
+
+  .fc-hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 16px;
+  }
+
+  .fc-nav {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .fc-nav button {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 24px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .fc-nav button:hover { border-color: var(--accent); color: var(--accent); }
+  .fc-nav button:disabled { opacity: 0.3; cursor: default; }
+
+  .fc-nav button.mark-good  { border-color: var(--green); color: var(--green); }
+  .fc-nav button.mark-bad   { border-color: var(--red); color: var(--red); }
+
+  .fc-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+
+  .fc-empty .big { font-size: 40px; margin-bottom: 12px; }
+
+  /* ── Weak points view ────────────────────────────── */
+  .weak-card {
+    background: var(--surface);
+    border: 1px solid rgba(210,153,34,0.3);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 10px;
+  }
+
+  .weak-card .problem-title { color: var(--orange); }
+
+  .weak-points-list {
+    margin-top: 8px;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .weak-points-list li {
+    font-size: 13px;
+    color: var(--muted);
+    padding: 4px 0 4px 12px;
+    border-left: 2px solid rgba(210,153,34,0.4);
+  }
+
+  /* ── Empty state ─────────────────────────────────── */
+  .empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--muted);
+  }
+
+  .empty-state .big { font-size: 48px; margin-bottom: 16px; }
+  .empty-state p { font-size: 14px; }
+  .empty-state code {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>DSA <span>Bank</span></h1>
+  <nav>
+    <button class="active" onclick="switchView('problems', this)">Problems</button>
+    <button onclick="switchView('flashcards', this)">Flashcards</button>
+    <button onclick="switchView('weakpoints', this)">Weak Points</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ── Problems View ─────────────────────────── -->
+  <div id="problems-view" class="view active">
+    <div class="stats" id="stats-bar"></div>
+    <div class="topic-grid" id="topic-grid"></div>
+    <div id="problem-section"></div>
+  </div>
+
+  <!-- ── Flashcard View ────────────────────────── -->
+  <div id="flashcard-view" class="view">
+    <h2>Flashcard Review</h2>
+    <div class="fc-controls">
+      <select id="fc-topic-filter" onchange="initFlashcards()">
+        <option value="all">All Topics</option>
+      </select>
+      <button onclick="initFlashcards()">Shuffle</button>
+      <span class="fc-progress" id="fc-progress"></span>
+    </div>
+
+    <div id="fc-content"></div>
+  </div>
+
+  <!-- ── Weak Points View ──────────────────────── -->
+  <div id="weakpoints-view" class="view">
+    <div class="section-title" style="margin-top:0">Problems you got stuck on</div>
+    <div id="weak-list"></div>
+  </div>
+
+</main>
+
+<script>
+// ── Helpers ──────────────────────────────────────────
+function byTopic() {
+  const map = {};
+  for (const p of DSA_DATA) {
+    if (!map[p.topic]) map[p.topic] = [];
+    map[p.topic].push(p);
+  }
+  return map;
+}
+
+function allFlashcards(topic) {
+  return DSA_DATA
+    .filter(p => topic === 'all' || p.topic === topic)
+    .flatMap(p => (p.flashcards || []).map(fc => ({ ...fc, problemTitle: p.title, topic: p.topic })));
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ── View switching ───────────────────────────────────
+function switchView(name, btn) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(name + '-view').classList.add('active');
+  btn.classList.add('active');
+  if (name === 'flashcards') renderFlashcardControls();
+  if (name === 'weakpoints') renderWeakPoints();
+}
+
+// ── Problems view ────────────────────────────────────
+let selectedTopic = null;
+
+function renderProblems() {
+  const grouped = byTopic();
+  const topics = Object.keys(grouped);
+
+  // Stats
+  const totalStuck = DSA_DATA.filter(p => p.stuckPoints && p.stuckPoints.length).length;
+  const totalFC = DSA_DATA.flatMap(p => p.flashcards || []).length;
+  document.getElementById('stats-bar').innerHTML = `
+    <div class="stat-item"><div class="stat-num">${DSA_DATA.length}</div><div class="stat-label">Problems</div></div>
+    <div class="stat-item"><div class="stat-num">${topics.length}</div><div class="stat-label">Topics</div></div>
+    <div class="stat-item"><div class="stat-num">${totalStuck}</div><div class="stat-label">Stuck Points</div></div>
+    <div class="stat-item"><div class="stat-num">${totalFC}</div><div class="stat-label">Flashcards</div></div>
+  `;
+
+  if (topics.length === 0) {
+    document.getElementById('topic-grid').innerHTML = '';
+    document.getElementById('problem-section').innerHTML = `
+      <div class="empty-state">
+        <div class="big">📚</div>
+        <p>No problems yet. Use the <code>/dsa</code> skill to add your first entry.</p>
+      </div>`;
+    return;
+  }
+
+  // Topic chips
+  document.getElementById('topic-grid').innerHTML = topics.map(t => `
+    <div class="topic-chip ${selectedTopic === t ? 'selected' : ''}" onclick="selectTopic('${t}')">
+      <span class="topic-name">${t}</span>
+      <span class="topic-count">${grouped[t].length}</span>
+    </div>
+  `).join('');
+
+  // Problem list
+  const toShow = selectedTopic ? grouped[selectedTopic] || [] : DSA_DATA;
+  const label = selectedTopic ? selectedTopic : 'All Problems';
+
+  document.getElementById('problem-section').innerHTML = `
+    <div class="section-title">${label} (${toShow.length})</div>
+    <div class="problem-list">
+      ${toShow.map(p => `
+        <div class="problem-card" id="card-${p.id}" onclick="toggleCard('${p.id}')">
+          <div class="problem-card-header">
+            <a class="problem-title" href="${p.url || '#'}" target="_blank" onclick="event.stopPropagation()">${p.title}</a>
+            <span class="tag date">${p.date}</span>
+          </div>
+          <div class="problem-meta">
+            <span class="tag">${p.topic}</span>
+            ${(p.patterns || []).map(pt => `<span class="tag pattern">${pt}</span>`).join('')}
+            ${p.stuckPoints && p.stuckPoints.length ? `<span class="tag stuck">stuck</span>` : ''}
+          </div>
+          <div class="expand-hint">▸ click to expand</div>
+          <div class="problem-notes">${(p.notes || '').replace(/\n/g, '<br>')}</div>
+          ${p.stuckPoints && p.stuckPoints.length
+            ? `<div class="stuck-section">${p.stuckPoints.join('; ')}</div>`
+            : ''}
+        </div>
+      `).join('')}
+    </div>`;
+}
+
+function selectTopic(t) {
+  selectedTopic = selectedTopic === t ? null : t;
+  renderProblems();
+}
+
+function toggleCard(id) {
+  document.getElementById('card-' + id).classList.toggle('expanded');
+}
+
+// ── Flashcard view ───────────────────────────────────
+let fcDeck = [];
+let fcIndex = 0;
+
+function renderFlashcardControls() {
+  const sel = document.getElementById('fc-topic-filter');
+  const current = sel.value;
+  const topics = [...new Set(DSA_DATA.map(p => p.topic))];
+  sel.innerHTML = `<option value="all">All Topics</option>` +
+    topics.map(t => `<option value="${t}" ${t === current ? 'selected' : ''}>${t}</option>`).join('');
+  initFlashcards();
+}
+
+function initFlashcards() {
+  const topic = document.getElementById('fc-topic-filter')?.value || 'all';
+  fcDeck = shuffle(allFlashcards(topic));
+  fcIndex = 0;
+  renderFC();
+}
+
+function renderFC() {
+  const el = document.getElementById('fc-content');
+  if (fcDeck.length === 0) {
+    el.innerHTML = `<div class="fc-empty"><div class="big">🃏</div><p>No flashcards yet for this topic.</p></div>`;
+    document.getElementById('fc-progress').textContent = '';
+    return;
+  }
+
+  document.getElementById('fc-progress').textContent = `${fcIndex + 1} / ${fcDeck.length}`;
+  const card = fcDeck[fcIndex];
+
+  el.innerHTML = `
+    <div class="fc-scene">
+      <div class="fc-card" id="fc-card" onclick="flipCard()">
+        <div class="fc-face front">
+          <div class="fc-label">${card.topic} · ${card.problemTitle}</div>
+          <div class="fc-text">${card.q}</div>
+          <div class="fc-hint">click to reveal</div>
+        </div>
+        <div class="fc-face back">
+          <div class="fc-label">Answer</div>
+          <div class="fc-text">${card.a}</div>
+        </div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button onclick="prevFC()" ${fcIndex === 0 ? 'disabled' : ''}>← Prev</button>
+      <button onclick="nextFC()" ${fcIndex === fcDeck.length - 1 ? 'disabled' : ''}>Next →</button>
+    </div>`;
+}
+
+function flipCard() {
+  document.getElementById('fc-card').classList.toggle('flipped');
+}
+
+function nextFC() { if (fcIndex < fcDeck.length - 1) { fcIndex++; renderFC(); } }
+function prevFC() { if (fcIndex > 0) { fcIndex--; renderFC(); } }
+
+// ── Weak points view ─────────────────────────────────
+function renderWeakPoints() {
+  const stuck = DSA_DATA.filter(p => p.stuckPoints && p.stuckPoints.length > 0);
+  const el = document.getElementById('weak-list');
+  if (stuck.length === 0) {
+    el.innerHTML = `<div class="empty-state"><div class="big">💪</div><p>No stuck points recorded yet.</p></div>`;
+    return;
+  }
+  el.innerHTML = stuck.map(p => `
+    <div class="weak-card">
+      <a class="problem-title" href="${p.url || '#'}" target="_blank">${p.title}</a>
+      <div class="tag" style="display:inline-block;margin-left:8px">${p.topic}</div>
+      <ul class="weak-points-list">
+        ${p.stuckPoints.map(s => `<li>${s}</li>`).join('')}
+      </ul>
+    </div>
+  `).join('');
+}
+
+// ── Boot ─────────────────────────────────────────────
+renderProblems();
+</script>
+
+</body>
+</html>
