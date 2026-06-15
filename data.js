@@ -19,5 +19,23 @@ const DSA_DATA = [
       { q: "Why is a loop needed in the bitwise addition approach?", a: "XOR and AND+shift produce two new numbers that still need to be added; repeat until AND (carry) becomes 0." },
       { q: "Time and space complexity of bitwise addition (no + operator)?", a: "O(1) time and space — bounded by fixed 32-bit integer width." }
     ]
+  },
+  {
+    id: "counting-bits",
+    title: "Counting Bits",
+    url: "https://leetcode.com/problems/counting-bits/description/",
+    topic: "Bit Manipulation",
+    date: "2026-06-16",
+    patterns: ["Offset DP", "Power of Two Boundary", "Section Mirroring"],
+    stuckPoints: [
+      "Was looking for constant-interval patterns; the actual pattern repeats at power-of-2 boundaries — in bit manipulation problems, always check powers of 2 first."
+    ],
+    notes: "bits[i] = 1 + bits[i - p] where p is the largest power of 2 ≤ i. Each section [2^k, 2^(k+1)-1] is a mirror of the previous section [0, 2^k-1] with every value +1. Track current power with a variable and double it when i reaches the next power.",
+    flashcards: [
+      { q: "What is the DP recurrence for Counting Bits?", a: "bits[i] = 1 + bits[i - p], where p is the largest power of 2 ≤ i." },
+      { q: "What pattern do sections between powers of 2 follow in bit counts?", a: "Each section [2^k, 2^(k+1)-1] mirrors the previous section with every value incremented by 1." },
+      { q: "Time and space complexity of the DP approach for Counting Bits?", a: "O(n) time and O(n) space." },
+      { q: "When should you look for power-of-2 boundaries instead of constant intervals?", a: "When counting or comparing bit properties — bit patterns reset and mirror at powers of 2, not at constant steps." }
+    ]
   }
 ];
