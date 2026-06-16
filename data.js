@@ -37,5 +37,21 @@ const DSA_DATA = [
       { q: "Time and space complexity of the DP approach for Counting Bits?", a: "O(n) time and O(n) space." },
       { q: "When should you look for power-of-2 boundaries instead of constant intervals?", a: "When counting or comparing bit properties — bit patterns reset and mirror at powers of 2, not at constant steps." }
     ]
+  },
+  {
+    id: "reverse-bits",
+    title: "Reverse Bits",
+    url: "https://leetcode.com/problems/reverse-bits/description/",
+    topic: "Bit Manipulation",
+    date: "2026-06-17",
+    patterns: ["Bit Extraction with AND", "Bit Construction with OR", "Shift and Build"],
+    stuckPoints: [],
+    notes: "Extract the LSB of n with n&1, OR it into revNum, then left-shift revNum (to make room for the next bit) and right-shift n (to expose the next bit). Repeat exactly 32 times. Note the direction: input is right-shifted, output is left-shifted — easy to mix up.",
+    flashcards: [
+      { q: "How do you extract the least significant bit of a number?", a: "n & 1 — AND with 1 isolates the last bit." },
+      { q: "In Reverse Bits, why is revNum left-shifted before OR-ing the current bit?", a: "To make room at the LSB — existing bits shift left, then the new extracted bit is OR-ed into position." },
+      { q: "What are the shift directions for input vs output in Reverse Bits?", a: "Input (n) is right-shifted to expose each bit; output (revNum) is left-shifted to build the reversed number." },
+      { q: "Time and space complexity of iterative bit reversal?", a: "O(1) — exactly 32 iterations, no extra space." }
+    ]
   }
 ];

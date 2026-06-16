@@ -7,3 +7,7 @@ What is the DP recurrence for Counting Bits?	bits[i] = 1 + bits[i - p], where p 
 What pattern do sections between powers of 2 follow in bit counts?	Each section [2^k, 2^(k+1)-1] mirrors the previous section with every value incremented by 1.	bit_manipulation counting_bits
 Time and space complexity of the DP approach for Counting Bits?	O(n) time and O(n) space.	bit_manipulation counting_bits
 When should you look for power-of-2 boundaries instead of constant intervals?	When counting or comparing bit properties — bit patterns reset and mirror at powers of 2, not at constant steps.	bit_manipulation counting_bits
+How do you extract the least significant bit of a number?	n & 1 — AND with 1 isolates the last bit.	bit_manipulation reverse_bits
+In Reverse Bits, why is revNum left-shifted before OR-ing the current bit?	To make room at the LSB — existing bits shift left, then the new extracted bit is OR-ed into position.	bit_manipulation reverse_bits
+What are the shift directions for input vs output in Reverse Bits?	Input (n) is right-shifted to expose each bit; output (revNum) is left-shifted to build the reversed number.	bit_manipulation reverse_bits
+Time and space complexity of iterative bit reversal?	O(1) — exactly 32 iterations, no extra space.	bit_manipulation reverse_bits
