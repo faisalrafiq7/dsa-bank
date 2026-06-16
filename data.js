@@ -71,5 +71,87 @@ const DSA_DATA = [
       { q: "How do you merge an overlapping interval into newInterval?", a: "newInterval.start = min(newInterval.start, cur.start); newInterval.end = max(newInterval.end, cur.end)." },
       { q: "Time and space complexity of insert interval?", a: "O(n) time, O(n) space for the output array." }
     ]
+  },
+  {
+    id: "merge-intervals",
+    title: "Merge Intervals",
+    url: "https://leetcode.com/problems/merge-intervals/description/",
+    topic: "Intervals",
+    date: "2026-06-17",
+    patterns: ["Sort then Scan", "Greedy Interval Merge", "Running Interval Tracking"],
+    stuckPoints: [],
+    notes: "Sort by start time, push first interval into result, then scan: if current start <= last result end, extend last result's end with max(curEnd, prevEnd); otherwise push current as a new interval. The sort is what makes a single pass sufficient.",
+    flashcards: [
+      { q: "Why must intervals be sorted before merging?", a: "Sorting by start time ensures all potentially overlapping intervals are adjacent, enabling a single linear pass." },
+      { q: "What is the overlap condition in Merge Intervals?", a: "cur.start <= prevEnd — current interval starts at or before the last merged interval ends." },
+      { q: "How do you extend a merged interval when overlap is found?", a: "ans.back()[1] = max(ans.back()[1], curEnd) — take the further of the two end points." },
+      { q: "Time and space complexity of Merge Intervals?", a: "O(n log n) for sorting, O(n) space for output." }
+    ]
+  },
+  {
+    id: "non-overlapping-intervals",
+    title: "Non-Overlapping Intervals",
+    url: "https://leetcode.com/problems/non-overlapping-intervals/description/",
+    topic: "Intervals",
+    date: "2026-06-17",
+    patterns: ["Greedy Earliest End", "Sort then Scan", "Virtual Deletion"],
+    stuckPoints: [
+      "Tried removing elements from vector — O(n) per deletion makes it O(n²) overall. No deletion needed; just count overlaps and track prevEnd virtually."
+    ],
+    notes: "Sort by start. Track prevEnd. When cur.start < prevEnd (overlap): remove the interval with the larger end (keep the smaller end to minimise future conflicts), increment count. When no overlap: update prevEnd to curEnd. Never actually delete from the array — the count is all that's needed.",
+    flashcards: [
+      { q: "In Non-Overlapping Intervals, which interval should you remove when two overlap?", a: "Remove the one with the larger end — keeping the smaller end greedily reduces the chance of future overlaps." },
+      { q: "Why don't you need to actually delete intervals from the array?", a: "You only need the removal count; track prevEnd virtually and increment a counter when overlap is detected." },
+      { q: "What is the overlap condition in Non-Overlapping Intervals?", a: "cur.start < prevEnd — strict less than, because touching intervals [1,2],[2,3] are not overlapping." },
+      { q: "Time and space complexity of Non-Overlapping Intervals?", a: "O(n log n) for sorting, O(1) extra space." }
+    ]
+  },
+  {
+    id: "meeting-rooms-ii",
+    title: "Meeting Rooms II",
+    url: "https://neetcode.io/problems/meeting-schedule-ii/question",
+    topic: "Intervals",
+    date: "2026-06-17",
+    patterns: ["Min-Heap End Tracking", "Sort then Scan", "Room Allocation Simulation"],
+    stuckPoints: [],
+    notes: "Two approaches: (1) Vector of rooms — for each interval scan all rooms for one whose last end <= cur.start; O(n²). (2) Optimal: min-heap of end times — sort by start, for each interval if heap.top() <= cur.start reuse that room (pop and push new end), else push new end. Answer = heap size. O(n log n).",
+    flashcards: [
+      { q: "What data structure gives the optimal O(n log n) solution for Meeting Rooms II?", a: "A min-heap of end times — always check if the earliest-ending room is free before allocating a new one." },
+      { q: "What is the condition to reuse an existing room in Meeting Rooms II?", a: "cur.start >= heap.top() — the meeting starts at or after the earliest-finishing room is free." },
+      { q: "Why does scanning a vector of rooms give O(n²) instead of O(n log n)?", a: "Finding the minimum end time in a vector is O(n) per interval; a min-heap reduces this to O(log n)." },
+      { q: "Time and space complexity of the optimal Meeting Rooms II solution?", a: "O(n log n) time for sorting and heap operations, O(n) space for the heap." }
+    ]
+  },
+  {
+    id: "best-time-to-buy-and-sell-stock",
+    title: "Best Time to Buy and Sell Stock",
+    url: "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/description/",
+    topic: "Greedy",
+    date: "2026-06-17",
+    patterns: ["Two Pointer Min-Max Scan", "Greedy Local Minimum", "Running Max Profit"],
+    stuckPoints: [],
+    notes: "Two-pointer: tail = buy (seeks minimum), head scans forward while prices rise and tracks max profit. Simpler canonical approach: track minPrice seen so far, at each step maxProfit = max(maxProfit, price - minPrice). Both O(n) time, O(1) space.",
+    flashcards: [
+      { q: "What is the simplest O(n) approach for Best Time to Buy and Sell Stock?", a: "Track minPrice seen so far; for each price, maxProfit = max(maxProfit, price - minPrice)." },
+      { q: "When should the buy pointer advance in this problem?", a: "When the current price is lower than the current buy price — reset buy to the current position." },
+      { q: "Why initialise maxProfit to 0 and not nums[0]?", a: "You can always choose not to transact, so 0 is the minimum possible profit." },
+      { q: "Time and space complexity of Best Time to Buy and Sell Stock?", a: "O(n) time, O(1) space." }
+    ]
+  },
+  {
+    id: "maximum-subarray",
+    title: "Maximum Subarray",
+    url: "https://leetcode.com/problems/maximum-subarray/description/",
+    topic: "Greedy",
+    date: "2026-06-17",
+    patterns: ["Kadane's Algorithm", "Two Pointer Sliding Window", "Local vs Global Optimum"],
+    stuckPoints: [],
+    notes: "Kadane's (Idea 2): at each element decide — extend current subarray (curSum + nums[i]) or start fresh (nums[i]), whichever is larger. Track global max. Edge case: initialise maxSum to nums[0] not 0, otherwise all-negative arrays return 0 incorrectly. Two-pointer (Idea 1) also works but has the same edge case and is harder to reason about.",
+    flashcards: [
+      { q: "What is the core decision in Kadane's algorithm at each element?", a: "Extend the current subarray (curSum + nums[i]) or start fresh (nums[i]) — whichever is larger." },
+      { q: "Kadane's recurrence for Maximum Subarray?", a: "curSum = max(curSum + nums[i], nums[i]); maxSum = max(maxSum, curSum)." },
+      { q: "Why must maxSum be initialised to nums[0] and not 0?", a: "For all-negative arrays, 0 would be wrongly returned; the actual answer is the least-negative element." },
+      { q: "Time and space complexity of Kadane's algorithm?", a: "O(n) time, O(1) space." }
+    ]
   }
 ];

@@ -15,3 +15,23 @@ What are the three cases when inserting an interval into a sorted non-overlappin
 How do you detect that two intervals do NOT overlap?	They don't overlap if cur.end < new.start (current is before) or cur.start > new.end (current is after).	intervals insert_interval
 How do you merge an overlapping interval into newInterval?	newInterval.start = min(newInterval.start, cur.start); newInterval.end = max(newInterval.end, cur.end).	intervals insert_interval
 Time and space complexity of insert interval?	O(n) time, O(n) space for the output array.	intervals insert_interval
+Why must intervals be sorted before merging?	Sorting by start time ensures all potentially overlapping intervals are adjacent, enabling a single linear pass.	intervals merge_intervals
+What is the overlap condition in Merge Intervals?	cur.start <= prevEnd — current interval starts at or before the last merged interval ends.	intervals merge_intervals
+How do you extend a merged interval when overlap is found?	ans.back()[1] = max(ans.back()[1], curEnd) — take the further of the two end points.	intervals merge_intervals
+Time and space complexity of Merge Intervals?	O(n log n) for sorting, O(n) space for output.	intervals merge_intervals
+In Non-Overlapping Intervals, which interval should you remove when two overlap?	Remove the one with the larger end — keeping the smaller end greedily reduces the chance of future overlaps.	intervals non_overlapping_intervals
+Why don't you need to actually delete intervals from the array?	You only need the removal count; track prevEnd virtually and increment a counter when overlap is detected.	intervals non_overlapping_intervals
+What is the overlap condition in Non-Overlapping Intervals?	cur.start < prevEnd — strict less than, because touching intervals [1,2],[2,3] are not overlapping.	intervals non_overlapping_intervals
+Time and space complexity of Non-Overlapping Intervals?	O(n log n) for sorting, O(1) extra space.	intervals non_overlapping_intervals
+What data structure gives the optimal O(n log n) solution for Meeting Rooms II?	A min-heap of end times — always check if the earliest-ending room is free before allocating a new one.	intervals meeting_rooms_ii
+What is the condition to reuse an existing room in Meeting Rooms II?	cur.start >= heap.top() — the meeting starts at or after the earliest-finishing room is free.	intervals meeting_rooms_ii
+Why does scanning a vector of rooms give O(n²) instead of O(n log n)?	Finding the minimum end time in a vector is O(n) per interval; a min-heap reduces this to O(log n).	intervals meeting_rooms_ii
+Time and space complexity of the optimal Meeting Rooms II solution?	O(n log n) time for sorting and heap operations, O(n) space for the heap.	intervals meeting_rooms_ii
+What is the simplest O(n) approach for Best Time to Buy and Sell Stock?	Track minPrice seen so far; for each price, maxProfit = max(maxProfit, price - minPrice).	greedy best_time_to_buy_and_sell_stock
+When should the buy pointer advance in this problem?	When the current price is lower than the current buy price — reset buy to the current position.	greedy best_time_to_buy_and_sell_stock
+Why initialise maxProfit to 0 and not nums[0]?	You can always choose not to transact, so 0 is the minimum possible profit.	greedy best_time_to_buy_and_sell_stock
+Time and space complexity of Best Time to Buy and Sell Stock?	O(n) time, O(1) space.	greedy best_time_to_buy_and_sell_stock
+What is the core decision in Kadane's algorithm at each element?	Extend the current subarray (curSum + nums[i]) or start fresh (nums[i]) — whichever is larger.	greedy maximum_subarray
+Kadane's recurrence for Maximum Subarray?	curSum = max(curSum + nums[i], nums[i]); maxSum = max(maxSum, curSum).	greedy maximum_subarray
+Why must maxSum be initialised to nums[0] and not 0?	For all-negative arrays, 0 would be wrongly returned; the actual answer is the least-negative element.	greedy maximum_subarray
+Time and space complexity of Kadane's algorithm?	O(n) time, O(1) space.	greedy maximum_subarray
