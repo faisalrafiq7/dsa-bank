@@ -3,9 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>DSA Bank</title>
-<link rel="stylesheet" href="style.css?v=1">
-<script src="data.js?v=1"></script>
+<link rel="stylesheet" href="style.css">
+<script src="data.js"></script>
 </head>
 <body>
 
@@ -13,7 +16,6 @@
   <h1>DSA <span>Bank</span></h1>
   <nav>
     <button class="active" onclick="switchView('problems', this)">Problems</button>
-    <button onclick="switchView('flashcards', this)">Flashcards</button>
     <button onclick="switchView('weakpoints', this)">Weak Points</button>
   </nav>
 </header>
@@ -27,20 +29,6 @@
     <div id="problem-section"></div>
   </div>
 
-  <!-- ── Flashcard View ────────────────────────── -->
-  <div id="flashcard-view" class="view">
-    <h2>Flashcard Review</h2>
-    <div class="fc-controls">
-      <select id="fc-topic-filter" onchange="initFlashcards()">
-        <option value="all">All Topics</option>
-      </select>
-      <button onclick="initFlashcards()">Shuffle</button>
-      <span class="fc-progress" id="fc-progress"></span>
-    </div>
-
-    <div id="fc-content"></div>
-  </div>
-
   <!-- ── Weak Points View ──────────────────────── -->
   <div id="weakpoints-view" class="view">
     <div class="section-title" style="margin-top:0">Problems you got stuck on</div>
@@ -50,7 +38,6 @@
 </main>
 
 <script>
-// ── Helpers ──────────────────────────────────────────
 function byTopic() {
   const map = {};
   for (const p of DSA_DATA) {
@@ -60,46 +47,28 @@ function byTopic() {
   return map;
 }
 
-function allFlashcards(topic) {
-  return DSA_DATA
-    .filter(p => topic === 'all' || p.topic === topic)
-    .flatMap(p => (p.flashcards || []).map(fc => ({ ...fc, problemTitle: p.title, topic: p.topic })));
-}
-
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-// ── View switching ───────────────────────────────────
 function switchView(name, btn) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
   document.getElementById(name + '-view').classList.add('active');
   btn.classList.add('active');
-  if (name === 'flashcards') renderFlashcardControls();
   if (name === 'weakpoints') renderWeakPoints();
 }
 
-// ── Problems view ────────────────────────────────────
+// ── Problems view ─────────────────────────────────────
 let selectedTopic = null;
 
 function renderProblems() {
   const grouped = byTopic();
   const topics = Object.keys(grouped);
 
-  // Stats
   const totalStuck = DSA_DATA.filter(p => p.stuckPoints && p.stuckPoints.length).length;
   const totalFC = DSA_DATA.flatMap(p => p.flashcards || []).length;
   document.getElementById('stats-bar').innerHTML = `
     <div class="stat-item"><div class="stat-num">${DSA_DATA.length}</div><div class="stat-label">Problems</div></div>
     <div class="stat-item"><div class="stat-num">${topics.length}</div><div class="stat-label">Topics</div></div>
     <div class="stat-item"><div class="stat-num">${totalStuck}</div><div class="stat-label">Stuck Points</div></div>
-    <div class="stat-item"><div class="stat-num">${totalFC}</div><div class="stat-label">Flashcards</div></div>
+    <div class="stat-item"><div class="stat-num">${totalFC}</div><div class="stat-label">Anki Cards</div></div>
   `;
 
   if (topics.length === 0) {
@@ -112,7 +81,6 @@ function renderProblems() {
     return;
   }
 
-  // Topic chips
   document.getElementById('topic-grid').innerHTML = topics.map(t => `
     <div class="topic-chip ${selectedTopic === t ? 'selected' : ''}" onclick="selectTopic('${t}')">
       <span class="topic-name">${t}</span>
@@ -120,7 +88,6 @@ function renderProblems() {
     </div>
   `).join('');
 
-  // Problem list
   const toShow = selectedTopic ? grouped[selectedTopic] || [] : DSA_DATA;
   const label = selectedTopic ? selectedTopic : 'All Problems';
 
@@ -157,68 +124,7 @@ function toggleCard(id) {
   document.getElementById('card-' + id).classList.toggle('expanded');
 }
 
-// ── Flashcard view ───────────────────────────────────
-let fcDeck = [];
-let fcIndex = 0;
-
-function renderFlashcardControls() {
-  const sel = document.getElementById('fc-topic-filter');
-  const current = sel.value;
-  const topics = [...new Set(DSA_DATA.map(p => p.topic))];
-  sel.innerHTML = `<option value="all">All Topics</option>` +
-    topics.map(t => `<option value="${t}" ${t === current ? 'selected' : ''}>${t}</option>`).join('');
-  initFlashcards();
-}
-
-function initFlashcards() {
-  const topic = document.getElementById('fc-topic-filter')?.value || 'all';
-  fcDeck = shuffle(allFlashcards(topic));
-  fcIndex = 0;
-  renderFC();
-}
-
-function renderFC() {
-  const el = document.getElementById('fc-content');
-  if (fcDeck.length === 0) {
-    el.innerHTML = `<div class="fc-empty"><div class="big">🃏</div><p>No flashcards yet for this topic.</p></div>`;
-    document.getElementById('fc-progress').textContent = '';
-    return;
-  }
-
-  document.getElementById('fc-progress').textContent = `${fcIndex + 1} / ${fcDeck.length}`;
-  const card = fcDeck[fcIndex];
-
-  el.innerHTML = `
-    <div class="fc-card" id="fc-card" onclick="flipCard()">
-      <div class="fc-label" id="fc-card-label">${card.topic} · ${card.problemTitle}</div>
-      <div class="fc-question">
-        <div class="fc-text">${card.q}</div>
-        <div class="fc-hint">click to reveal answer</div>
-      </div>
-      <div class="fc-answer">${card.a}</div>
-      <div class="fc-hint" style="display:none" id="fc-flip-hint">click to flip back</div>
-    </div>
-    <div class="fc-nav">
-      <button onclick="prevFC()" ${fcIndex === 0 ? 'disabled' : ''}>← Prev</button>
-      <button onclick="nextFC()" ${fcIndex === fcDeck.length - 1 ? 'disabled' : ''}>Next →</button>
-    </div>`;
-}
-
-function flipCard() {
-  const card = document.getElementById('fc-card');
-  const revealed = card.classList.toggle('revealed');
-  const label = document.getElementById('fc-card-label');
-  const hint = document.getElementById('fc-flip-hint');
-  if (label) label.textContent = revealed
-    ? 'Answer'
-    : `${fcDeck[fcIndex].topic} · ${fcDeck[fcIndex].problemTitle}`;
-  if (hint) hint.style.display = revealed ? 'block' : 'none';
-}
-
-function nextFC() { if (fcIndex < fcDeck.length - 1) { fcIndex++; renderFC(); } }
-function prevFC() { if (fcIndex > 0) { fcIndex--; renderFC(); } }
-
-// ── Weak points view ─────────────────────────────────
+// ── Weak points view ──────────────────────────────────
 function renderWeakPoints() {
   const stuck = DSA_DATA.filter(p => p.stuckPoints && p.stuckPoints.length > 0);
   const el = document.getElementById('weak-list');
@@ -237,7 +143,6 @@ function renderWeakPoints() {
   `).join('');
 }
 
-// ── Boot ─────────────────────────────────────────────
 renderProblems();
 </script>
 

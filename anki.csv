@@ -1,0 +1,9 @@
+#separator:tab
+What does XOR represent in binary addition?	The sum of two bits without carry — 1^1=0, 1^0=1, 0^0=0.	bit_manipulation sum_of_two_integers
+How do you compute the carry in bitwise addition?	(a & b) << 1 — AND finds where both bits are set, left shift moves the carry to the correct position.	bit_manipulation sum_of_two_integers
+Why is a loop needed in the bitwise addition approach?	XOR and AND+shift produce two new numbers that still need to be added; repeat until AND (carry) becomes 0.	bit_manipulation sum_of_two_integers
+Time and space complexity of bitwise addition (no + operator)?	O(1) time and space — bounded by fixed 32-bit integer width.	bit_manipulation sum_of_two_integers
+What is the DP recurrence for Counting Bits?	bits[i] = 1 + bits[i - p], where p is the largest power of 2 ≤ i.	bit_manipulation counting_bits
+What pattern do sections between powers of 2 follow in bit counts?	Each section [2^k, 2^(k+1)-1] mirrors the previous section with every value incremented by 1.	bit_manipulation counting_bits
+Time and space complexity of the DP approach for Counting Bits?	O(n) time and O(n) space.	bit_manipulation counting_bits
+When should you look for power-of-2 boundaries instead of constant intervals?	When counting or comparing bit properties — bit patterns reset and mirror at powers of 2, not at constant steps.	bit_manipulation counting_bits
