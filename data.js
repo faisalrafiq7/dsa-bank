@@ -53,5 +53,23 @@ const DSA_DATA = [
       { q: "What are the shift directions for input vs output in Reverse Bits?", a: "Input (n) is right-shifted to expose each bit; output (revNum) is left-shifted to build the reversed number." },
       { q: "Time and space complexity of iterative bit reversal?", a: "O(1) — exactly 32 iterations, no extra space." }
     ]
+  },
+  {
+    id: "insert-interval",
+    title: "Insert Interval",
+    url: "https://leetcode.com/problems/insert-interval/description/",
+    topic: "Intervals",
+    date: "2026-06-17",
+    patterns: ["Three-Case Interval Classification", "Greedy Interval Merge", "Linear Interval Scan"],
+    stuckPoints: [
+      "Tried index-based approach to find start/end of merge range — produces too many edge cases. Simpler: single linear scan with three-case classification (before / overlap / after)."
+    ],
+    notes: "Single pass with three cases: (1) current ends before new starts → add current as-is; (2) current starts after new ends → flush newInterval if not yet added, then add current; (3) overlap → expand newInterval bounds with min/max. Handle the trailing case: if newInterval was never flushed, add it at the end.",
+    flashcards: [
+      { q: "What are the three cases when inserting an interval into a sorted non-overlapping list?", a: "Entirely before (cur.end < new.start), entirely after (cur.start > new.end), or overlapping — merge by expanding newInterval bounds." },
+      { q: "How do you detect that two intervals do NOT overlap?", a: "They don't overlap if cur.end < new.start (current is before) or cur.start > new.end (current is after)." },
+      { q: "How do you merge an overlapping interval into newInterval?", a: "newInterval.start = min(newInterval.start, cur.start); newInterval.end = max(newInterval.end, cur.end)." },
+      { q: "Time and space complexity of insert interval?", a: "O(n) time, O(n) space for the output array." }
+    ]
   }
 ];

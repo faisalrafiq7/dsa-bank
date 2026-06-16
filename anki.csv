@@ -11,3 +11,7 @@ How do you extract the least significant bit of a number?	n & 1 — AND with 1 i
 In Reverse Bits, why is revNum left-shifted before OR-ing the current bit?	To make room at the LSB — existing bits shift left, then the new extracted bit is OR-ed into position.	bit_manipulation reverse_bits
 What are the shift directions for input vs output in Reverse Bits?	Input (n) is right-shifted to expose each bit; output (revNum) is left-shifted to build the reversed number.	bit_manipulation reverse_bits
 Time and space complexity of iterative bit reversal?	O(1) — exactly 32 iterations, no extra space.	bit_manipulation reverse_bits
+What are the three cases when inserting an interval into a sorted non-overlapping list?	Entirely before (cur.end < new.start), entirely after (cur.start > new.end), or overlapping — merge by expanding newInterval bounds.	intervals insert_interval
+How do you detect that two intervals do NOT overlap?	They don't overlap if cur.end < new.start (current is before) or cur.start > new.end (current is after).	intervals insert_interval
+How do you merge an overlapping interval into newInterval?	newInterval.start = min(newInterval.start, cur.start); newInterval.end = max(newInterval.end, cur.end).	intervals insert_interval
+Time and space complexity of insert interval?	O(n) time, O(n) space for the output array.	intervals insert_interval
