@@ -10,7 +10,8 @@ const DSA_DATA = [
     date: "2026-06-16",
     patterns: ["XOR as Bitwise Addition", "AND + Left Shift for Carry", "Iterative Carry Propagation"],
     stuckPoints: [
-      "Assumed a single bitwise operation would suffice — it's actually iterative: XOR handles sum, AND+shift handles carry, repeated until carry is zero."
+      "Assumed a single bitwise operation would give the result directly.",
+      "It's actually iterative — XOR gives sum, AND+shift gives carry, repeat until carry is zero."
     ],
     notes: "Add two numbers without using the + operator. XOR gives the sum of two bits without carry — 1^1=0, 1^0=1. AND finds where both bits are set; left-shift the result to place the carry correctly. XOR and AND produce two new numbers that must be added again — repeat until the carry (AND result) is zero.",
     flashcards: [
@@ -28,7 +29,8 @@ const DSA_DATA = [
     date: "2026-06-16",
     patterns: ["Offset DP", "Power of Two Boundary", "Section Mirroring"],
     stuckPoints: [
-      "Was looking for constant-interval patterns; the actual pattern repeats at power-of-2 boundaries — in bit manipulation problems, always check powers of 2 first."
+      "Was looking for constant-interval patterns instead of power-of-2 boundaries.",
+      "In bit manipulation problems, always check powers of 2 first — patterns reset and mirror there."
     ],
     notes: "Recurrence: bits[i] = 1 + bits[i - p], where p is the largest power of 2 <= i. Each section [2^k, 2^(k+1)-1] mirrors the previous section with every value incremented by 1. Track the current power with a variable and double it when i reaches the next power of 2.",
     flashcards: [
@@ -62,7 +64,8 @@ const DSA_DATA = [
     date: "2026-06-17",
     patterns: ["Three-Case Interval Classification", "Greedy Interval Merge", "Linear Interval Scan"],
     stuckPoints: [
-      "Tried index-based approach to find start/end of merge range — produces too many edge cases. Simpler: single linear scan with three-case classification (before / overlap / after)."
+      "Tried index-based approach to find the start/end of the merge range — too many edge cases.",
+      "Simpler fix: single linear scan with three-case classification (before / overlap / after)."
     ],
     notes: "Three cases: current ends before new starts (add current as-is), current starts after new ends (flush newInterval first then add current), or overlap (expand newInterval bounds with min/max). For overlap: newInterval.start = min(both starts), newInterval.end = max(both ends). After the loop, flush newInterval if it was never added.",
     flashcards: [
@@ -96,7 +99,8 @@ const DSA_DATA = [
     date: "2026-06-17",
     patterns: ["Greedy Earliest End", "Sort then Scan", "Virtual Deletion"],
     stuckPoints: [
-      "Tried removing elements from vector — O(n) per deletion makes it O(n²) overall. No deletion needed; just count overlaps and track prevEnd virtually."
+      "Tried removing elements from vector — O(n) per deletion makes it O(n²) overall.",
+      "No deletion needed; just count overlaps and track prevEnd virtually."
     ],
     notes: "Sort by start time. When cur.start < prevEnd (overlap), remove the interval with the larger end — the smaller end causes fewer future conflicts. When no overlap, update prevEnd to curEnd. No actual deletion needed — count overlaps and track prevEnd virtually.",
     flashcards: [
