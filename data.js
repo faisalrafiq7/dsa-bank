@@ -12,7 +12,7 @@ const DSA_DATA = [
     stuckPoints: [
       "Assumed a single bitwise operation would suffice — it's actually iterative: XOR handles sum, AND+shift handles carry, repeated until carry is zero."
     ],
-    notes: "Add two numbers without + operator. XOR gives sum without carry (1^1=0, 1^0=1). AND finds where both bits are set — shift left to get the carry in the right position. These two results are two new numbers that still need adding, so repeat until carry (AND result) becomes 0.",
+    notes: "Add two numbers without using the + operator. XOR gives the sum of two bits without carry — 1^1=0, 1^0=1. AND finds where both bits are set; left-shift the result to place the carry correctly. XOR and AND produce two new numbers that must be added again — repeat until the carry (AND result) is zero.",
     flashcards: [
       { q: "What does XOR represent in binary addition?", a: "The sum of two bits without carry — 1^1=0, 1^0=1, 0^0=0." },
       { q: "How do you compute the carry in bitwise addition?", a: "(a & b) << 1 — AND finds where both bits are set, left shift moves the carry to the correct position." },
@@ -30,7 +30,7 @@ const DSA_DATA = [
     stuckPoints: [
       "Was looking for constant-interval patterns; the actual pattern repeats at power-of-2 boundaries — in bit manipulation problems, always check powers of 2 first."
     ],
-    notes: "bits[i] = 1 + bits[i - p] where p is the largest power of 2 ≤ i. Each section [2^k, 2^(k+1)-1] is a mirror of the previous section [0, 2^k-1] with every value +1. Track current power with a variable and double it when i reaches the next power.",
+    notes: "Recurrence: bits[i] = 1 + bits[i - p], where p is the largest power of 2 <= i. Each section [2^k, 2^(k+1)-1] mirrors the previous section with every value incremented by 1. Track the current power with a variable and double it when i reaches the next power of 2.",
     flashcards: [
       { q: "What is the DP recurrence for Counting Bits?", a: "bits[i] = 1 + bits[i - p], where p is the largest power of 2 ≤ i." },
       { q: "What pattern do sections between powers of 2 follow in bit counts?", a: "Each section [2^k, 2^(k+1)-1] mirrors the previous section with every value incremented by 1." },
@@ -46,7 +46,7 @@ const DSA_DATA = [
     date: "2026-06-17",
     patterns: ["Bit Extraction with AND", "Bit Construction with OR", "Shift and Build"],
     stuckPoints: [],
-    notes: "Extract the LSB of n with n&1, OR it into revNum, then left-shift revNum (to make room for the next bit) and right-shift n (to expose the next bit). Repeat exactly 32 times. Note the direction: input is right-shifted, output is left-shifted — easy to mix up.",
+    notes: "Extract the LSB of n using n & 1. OR the extracted bit into revNum to append it at the current position. Left-shift revNum to make room for the next bit, right-shift n to expose the next bit. Repeat exactly 32 times — input is right-shifted, output is left-shifted (easy to mix up).",
     flashcards: [
       { q: "How do you extract the least significant bit of a number?", a: "n & 1 — AND with 1 isolates the last bit." },
       { q: "In Reverse Bits, why is revNum left-shifted before OR-ing the current bit?", a: "To make room at the LSB — existing bits shift left, then the new extracted bit is OR-ed into position." },
@@ -64,7 +64,7 @@ const DSA_DATA = [
     stuckPoints: [
       "Tried index-based approach to find start/end of merge range — produces too many edge cases. Simpler: single linear scan with three-case classification (before / overlap / after)."
     ],
-    notes: "Single pass with three cases: (1) current ends before new starts → add current as-is; (2) current starts after new ends → flush newInterval if not yet added, then add current; (3) overlap → expand newInterval bounds with min/max. Handle the trailing case: if newInterval was never flushed, add it at the end.",
+    notes: "Three cases: current ends before new starts (add current as-is), current starts after new ends (flush newInterval first then add current), or overlap (expand newInterval bounds with min/max). For overlap: newInterval.start = min(both starts), newInterval.end = max(both ends). After the loop, flush newInterval if it was never added.",
     flashcards: [
       { q: "What are the three cases when inserting an interval into a sorted non-overlapping list?", a: "Entirely before (cur.end < new.start), entirely after (cur.start > new.end), or overlapping — merge by expanding newInterval bounds." },
       { q: "How do you detect that two intervals do NOT overlap?", a: "They don't overlap if cur.end < new.start (current is before) or cur.start > new.end (current is after)." },
@@ -80,7 +80,7 @@ const DSA_DATA = [
     date: "2026-06-17",
     patterns: ["Sort then Scan", "Greedy Interval Merge", "Running Interval Tracking"],
     stuckPoints: [],
-    notes: "Sort by start time, push first interval into result, then scan: if current start <= last result end, extend last result's end with max(curEnd, prevEnd); otherwise push current as a new interval. The sort is what makes a single pass sufficient.",
+    notes: "Sort all intervals by start time so overlapping ones are always adjacent. Push the first interval into the result, then scan: if cur.start <= last result end, extend the end to max(curEnd, prevEnd). Otherwise push the current interval as a new entry. Sorting is what makes a single linear pass sufficient.",
     flashcards: [
       { q: "Why must intervals be sorted before merging?", a: "Sorting by start time ensures all potentially overlapping intervals are adjacent, enabling a single linear pass." },
       { q: "What is the overlap condition in Merge Intervals?", a: "cur.start <= prevEnd — current interval starts at or before the last merged interval ends." },
@@ -98,7 +98,7 @@ const DSA_DATA = [
     stuckPoints: [
       "Tried removing elements from vector — O(n) per deletion makes it O(n²) overall. No deletion needed; just count overlaps and track prevEnd virtually."
     ],
-    notes: "Sort by start. Track prevEnd. When cur.start < prevEnd (overlap): remove the interval with the larger end (keep the smaller end to minimise future conflicts), increment count. When no overlap: update prevEnd to curEnd. Never actually delete from the array — the count is all that's needed.",
+    notes: "Sort by start time. When cur.start < prevEnd (overlap), remove the interval with the larger end — the smaller end causes fewer future conflicts. When no overlap, update prevEnd to curEnd. No actual deletion needed — count overlaps and track prevEnd virtually.",
     flashcards: [
       { q: "In Non-Overlapping Intervals, which interval should you remove when two overlap?", a: "Remove the one with the larger end — keeping the smaller end greedily reduces the chance of future overlaps." },
       { q: "Why don't you need to actually delete intervals from the array?", a: "You only need the removal count; track prevEnd virtually and increment a counter when overlap is detected." },
@@ -114,7 +114,7 @@ const DSA_DATA = [
     date: "2026-06-17",
     patterns: ["Min-Heap End Tracking", "Sort then Scan", "Room Allocation Simulation"],
     stuckPoints: [],
-    notes: "Two approaches: (1) Vector of rooms — for each interval scan all rooms for one whose last end <= cur.start; O(n²). (2) Optimal: min-heap of end times — sort by start, for each interval if heap.top() <= cur.start reuse that room (pop and push new end), else push new end. Answer = heap size. O(n log n).",
+    notes: "Brute force: vector of rooms, scan all rooms per interval to find a free one — O(n²). Optimal: sort by start time, use a min-heap of end times. For each interval: if heap.top() <= cur.start, reuse that room (pop old end, push new end). Otherwise allocate a new room (push new end). Answer = heap size — O(n log n) time, O(n) space.",
     flashcards: [
       { q: "What data structure gives the optimal O(n log n) solution for Meeting Rooms II?", a: "A min-heap of end times — always check if the earliest-ending room is free before allocating a new one." },
       { q: "What is the condition to reuse an existing room in Meeting Rooms II?", a: "cur.start >= heap.top() — the meeting starts at or after the earliest-finishing room is free." },
@@ -130,7 +130,7 @@ const DSA_DATA = [
     date: "2026-06-17",
     patterns: ["Two Pointer Min-Max Scan", "Greedy Local Minimum", "Running Max Profit"],
     stuckPoints: [],
-    notes: "Two-pointer: tail = buy (seeks minimum), head scans forward while prices rise and tracks max profit. Simpler canonical approach: track minPrice seen so far, at each step maxProfit = max(maxProfit, price - minPrice). Both O(n) time, O(1) space.",
+    notes: "Canonical O(n) approach: track minPrice seen so far; at each step maxProfit = max(maxProfit, price - minPrice). Two-pointer alternative: tail = buy day (seeks minimum), head scans forward while prices rise. Both are O(n) time, O(1) space.",
     flashcards: [
       { q: "What is the simplest O(n) approach for Best Time to Buy and Sell Stock?", a: "Track minPrice seen so far; for each price, maxProfit = max(maxProfit, price - minPrice)." },
       { q: "When should the buy pointer advance in this problem?", a: "When the current price is lower than the current buy price — reset buy to the current position." },
@@ -146,7 +146,7 @@ const DSA_DATA = [
     date: "2026-06-17",
     patterns: ["Kadane's Algorithm", "Two Pointer Sliding Window", "Local vs Global Optimum"],
     stuckPoints: [],
-    notes: "Kadane's (Idea 2): at each element decide — extend current subarray (curSum + nums[i]) or start fresh (nums[i]), whichever is larger. Track global max. Edge case: initialise maxSum to nums[0] not 0, otherwise all-negative arrays return 0 incorrectly. Two-pointer (Idea 1) also works but has the same edge case and is harder to reason about.",
+    notes: "Kadane's: at each element, curSum = max(curSum + nums[i], nums[i]) — extend current subarray or start fresh, whichever is larger. Track the global max: maxSum = max(maxSum, curSum). Initialise maxSum to nums[0], not 0 — otherwise all-negative arrays return 0 incorrectly. Two-pointer also works but Kadane's is simpler and cleaner.",
     flashcards: [
       { q: "What is the core decision in Kadane's algorithm at each element?", a: "Extend the current subarray (curSum + nums[i]) or start fresh (nums[i]) — whichever is larger." },
       { q: "Kadane's recurrence for Maximum Subarray?", a: "curSum = max(curSum + nums[i], nums[i]); maxSum = max(maxSum, curSum)." },
