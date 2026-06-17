@@ -25,6 +25,7 @@
   <!-- ── Problems View ─────────────────────────── -->
   <div id="problems-view" class="view active">
     <div class="stats" id="stats-bar"></div>
+    <input id="search" type="text" placeholder="Search problems, topics, patterns…" oninput="renderProblems()" autocomplete="off">
     <div class="topic-grid" id="topic-grid"></div>
     <div id="problem-section"></div>
   </div>
@@ -59,6 +60,7 @@ function switchView(name, btn) {
 let selectedTopic = null;
 
 function renderProblems() {
+  const query = (document.getElementById('search')?.value || '').toLowerCase().trim();
   const grouped = byTopic();
   const topics = Object.keys(grouped);
 
@@ -81,15 +83,31 @@ function renderProblems() {
     return;
   }
 
-  document.getElementById('topic-grid').innerHTML = topics.map(t => `
-    <div class="topic-chip ${selectedTopic === t ? 'selected' : ''}" onclick="selectTopic('${t}')">
-      <span class="topic-name">${t}</span>
-      <span class="topic-count">${grouped[t].length}</span>
-    </div>
-  `).join('');
+  // Hide topic chips while searching
+  const topicGrid = document.getElementById('topic-grid');
+  if (query) {
+    topicGrid.innerHTML = '';
+  } else {
+    topicGrid.innerHTML = topics.map(t => `
+      <div class="topic-chip ${selectedTopic === t ? 'selected' : ''}" onclick="selectTopic('${t}')">
+        <span class="topic-name">${t}</span>
+        <span class="topic-count">${grouped[t].length}</span>
+      </div>
+    `).join('');
+  }
 
-  const toShow = selectedTopic ? grouped[selectedTopic] || [] : DSA_DATA;
-  const label = selectedTopic ? selectedTopic : 'All Problems';
+  let toShow = selectedTopic && !query ? grouped[selectedTopic] || [] : DSA_DATA;
+
+  if (query) {
+    toShow = DSA_DATA.filter(p =>
+      p.title.toLowerCase().includes(query) ||
+      p.topic.toLowerCase().includes(query) ||
+      (p.patterns || []).some(pt => pt.toLowerCase().includes(query)) ||
+      (p.notes || '').toLowerCase().includes(query)
+    );
+  }
+
+  const label = query ? `Results for "${query}"` : selectedTopic ? selectedTopic : 'All Problems';
 
   document.getElementById('problem-section').innerHTML = `
     <div class="section-title">${label} (${toShow.length})</div>
