@@ -203,6 +203,32 @@ main { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
 
 .problem-card.expanded .problem-notes { display: block; }
 
+.problem-notes ul, .stuck-section ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.problem-notes ul li, .stuck-section ul li {
+  padding-left: 16px;
+  position: relative;
+}
+
+.problem-notes ul li::before {
+  content: "–";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+}
+
+.stuck-section ul li::before {
+  content: "–";
+  position: absolute;
+  left: 0;
+  color: var(--orange);
+}
+
 .stuck-section {
   margin-top: 10px;
   font-size: 13px;
@@ -214,7 +240,7 @@ main { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
   display: none;
 }
 
-.stuck-section::before { content: "⚠ Stuck: "; font-weight: 600; }
+.stuck-section::before { content: "⚠ Stuck points"; font-weight: 600; display: block; margin-bottom: 6px; }
 .problem-card.expanded .stuck-section { display: block; }
 
 .expand-hint {

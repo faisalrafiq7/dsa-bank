@@ -124,13 +124,23 @@ function renderProblems() {
             ${p.stuckPoints && p.stuckPoints.length ? `<span class="tag stuck">stuck</span>` : ''}
           </div>
           <div class="expand-hint">▸ click to expand</div>
-          <div class="problem-notes">${(p.notes || '').replace(/\n/g, '<br>')}</div>
+          <div class="problem-notes">${notesToBullets(p.notes)}</div>
           ${p.stuckPoints && p.stuckPoints.length
-            ? `<div class="stuck-section">${p.stuckPoints.join('; ')}</div>`
+            ? `<div class="stuck-section"><ul>${p.stuckPoints.map(s => `<li>${s}</li>`).join('')}</ul></div>`
             : ''}
         </div>
       `).join('')}
     </div>`;
+}
+
+function notesToBullets(notes) {
+  if (!notes) return '';
+  // Split on ". " followed by a capital letter or a number, preserving abbreviations like O(n)
+  const bullets = notes
+    .split(/\.\s+(?=[A-Z0-9(])/)
+    .map(s => s.replace(/\.$/, '').trim())
+    .filter(s => s.length > 0);
+  return '<ul>' + bullets.map(b => `<li>${b}.</li>`).join('') + '</ul>';
 }
 
 function selectTopic(t) {
