@@ -157,5 +157,24 @@ const DSA_DATA = [
       { q: "Why must maxSum be initialised to nums[0] and not 0?", a: "For all-negative arrays, 0 would be wrongly returned; the actual answer is the least-negative element." },
       { q: "Time and space complexity of Kadane's algorithm?", a: "O(n) time, O(1) space." }
     ]
+  },
+  {
+    id: "maximum-product-subarray",
+    title: "Maximum Product Subarray",
+    url: "https://leetcode.com/problems/maximum-product-subarray/description/",
+    topic: "Dynamic Programming",
+    date: "2026-06-17",
+    patterns: ["Dual DP State (Max + Min)", "Sign-Aware Greedy Extension", "Memoised Recursion", "Iterative DP"],
+    stuckPoints: [
+      "The need for two recursions (max and min) is not obvious at first.",
+      "Min is needed because a negative min × negative element = large positive — min feeds directly into max."
+    ],
+    notes: "Track both max and min product because a negative flips the sign — min can become max and vice versa. For a positive element: multiply by max continuation to extend max, multiply by min continuation to extend min. For a negative element: the logic reverses — multiply by min continuation to get max, multiply by max continuation to get min. Iterative Kadane's variant: curMax = max(nums[i], curMax*nums[i], curMin*nums[i]); curMin = min of the same three — O(n) time, O(1) space. --- 2026-06-17 --- Iterative approach confirmed: keep curMax and curMin at each index. At i+1, newMax = max(nums[i], curMax*nums[i], curMin*nums[i]). NewMin = min of same three. Maintain a running answer max.",
+    flashcards: [
+      { q: "Why must you track both max and min product in Maximum Product Subarray?", a: "A negative minimum can become the maximum when multiplied by another negative — min and max can flip at each step." },
+      { q: "What happens to max and min when the current element is negative?", a: "They swap roles — multiply the current element by curMin to get the new curMax, and by curMax to get the new curMin." },
+      { q: "What is the iterative Kadane's variant for Maximum Product Subarray?", a: "curMax = max(nums[i], curMax*nums[i], curMin*nums[i]); curMin = min of the same three. Track global max." },
+      { q: "Time and space complexity of Maximum Product Subarray?", a: "O(n) time; O(n) with memoisation, O(1) with the iterative approach." }
+    ]
   }
 ];

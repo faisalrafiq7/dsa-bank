@@ -35,3 +35,7 @@ What is the core decision in Kadane's algorithm at each element?	Extend the curr
 Kadane's recurrence for Maximum Subarray?	curSum = max(curSum + nums[i], nums[i]); maxSum = max(maxSum, curSum).	greedy maximum_subarray
 Why must maxSum be initialised to nums[0] and not 0?	For all-negative arrays, 0 would be wrongly returned; the actual answer is the least-negative element.	greedy maximum_subarray
 Time and space complexity of Kadane's algorithm?	O(n) time, O(1) space.	greedy maximum_subarray
+Why must you track both max and min product in Maximum Product Subarray?	A negative minimum can become the maximum when multiplied by another negative — min and max can flip at each step.	dynamic_programming maximum_product_subarray
+What happens to max and min when the current element is negative?	They swap roles — multiply the current element by curMin to get the new curMax, and by curMax to get the new curMin.	dynamic_programming maximum_product_subarray
+What is the iterative Kadane's variant for Maximum Product Subarray?	curMax = max(nums[i], curMax*nums[i], curMin*nums[i]); curMin = min of the same three. Track global max.	dynamic_programming maximum_product_subarray
+Time and space complexity of Maximum Product Subarray?	O(n) time; O(n) with memoisation, O(1) with the iterative approach.	dynamic_programming maximum_product_subarray
