@@ -15,10 +15,8 @@ const DSA_DATA = [
     ],
     notes: "Add two numbers without using the + operator. XOR gives the sum of two bits without carry — 1^1=0, 1^0=1. AND finds where both bits are set; left-shift the result to place the carry correctly. XOR and AND produce two new numbers that must be added again — repeat until the carry (AND result) is zero.",
     flashcards: [
-      { q: "What does XOR represent in binary addition?", a: "The sum of two bits without carry — 1^1=0, 1^0=1, 0^0=0." },
-      { q: "How do you compute the carry in bitwise addition?", a: "(a & b) << 1 — AND finds where both bits are set, left shift moves the carry to the correct position." },
-      { q: "Why is a loop needed in the bitwise addition approach?", a: "XOR and AND+shift produce two new numbers that still need to be added; repeat until AND (carry) becomes 0." },
-      { q: "Time and space complexity of bitwise addition (no + operator)?", a: "O(1) time and space — bounded by fixed 32-bit integer width." }
+      { q: "[Sum of Two Integers] What two bit operations replace addition, and why must you loop?", a: "XOR gives sum without carry; (a & b) << 1 gives the carry. Loop because XOR+AND produce two new numbers still needing addition — stop when carry is zero." },
+      { q: "[Sum of Two Integers] What does (a & b) << 1 compute and why?", a: "The carry — AND finds positions where both bits are 1 (carry occurs), left shift places it in the correct next column." }
     ]
   },
   {
@@ -34,10 +32,8 @@ const DSA_DATA = [
     ],
     notes: "Recurrence: bits[i] = 1 + bits[i - p], where p is the largest power of 2 <= i. Each section [2^k, 2^(k+1)-1] mirrors the previous section with every value incremented by 1. Track the current power with a variable and double it when i reaches the next power of 2.",
     flashcards: [
-      { q: "What is the DP recurrence for Counting Bits?", a: "bits[i] = 1 + bits[i - p], where p is the largest power of 2 ≤ i." },
-      { q: "What pattern do sections between powers of 2 follow in bit counts?", a: "Each section [2^k, 2^(k+1)-1] mirrors the previous section with every value incremented by 1." },
-      { q: "Time and space complexity of the DP approach for Counting Bits?", a: "O(n) time and O(n) space." },
-      { q: "When should you look for power-of-2 boundaries instead of constant intervals?", a: "When counting or comparing bit properties — bit patterns reset and mirror at powers of 2, not at constant steps." }
+      { q: "[Counting Bits] Count set bits for all numbers 0..n in O(n): what recurrence avoids recomputing?", a: "bits[i] = 1 + bits[i - p], where p is the largest power of 2 <= i. Each section [2^k, 2^(k+1)-1] mirrors the previous with every value +1." },
+      { q: "[Counting Bits] Why does the pattern repeat at powers of 2 and not at constant intervals?", a: "Each power of 2 adds a new leading 1-bit — the result is an exact mirror of the previous section. This follows binary representation, not arithmetic spacing." }
     ]
   },
   {
@@ -50,10 +46,8 @@ const DSA_DATA = [
     stuckPoints: [],
     notes: "Extract the LSB of n using n & 1. OR the extracted bit into revNum to append it at the current position. Left-shift revNum to make room for the next bit, right-shift n to expose the next bit. Repeat exactly 32 times — input is right-shifted, output is left-shifted (easy to mix up).",
     flashcards: [
-      { q: "How do you extract the least significant bit of a number?", a: "n & 1 — AND with 1 isolates the last bit." },
-      { q: "In Reverse Bits, why is revNum left-shifted before OR-ing the current bit?", a: "To make room at the LSB — existing bits shift left, then the new extracted bit is OR-ed into position." },
-      { q: "What are the shift directions for input vs output in Reverse Bits?", a: "Input (n) is right-shifted to expose each bit; output (revNum) is left-shifted to build the reversed number." },
-      { q: "Time and space complexity of iterative bit reversal?", a: "O(1) — exactly 32 iterations, no extra space." }
+      { q: "[Reverse Bits] To reverse a 32-bit integer bit by bit: what two operations per iteration and in what order?", a: "Left-shift revNum first (make room), OR in n & 1 (append LSB), then right-shift n. Repeat 32 times." },
+      { q: "[Reverse Bits] What is the key shift direction rule — input vs output?", a: "Input (n) right-shifts to expose each bit; output (revNum) left-shifts to build the reversed number — they go in opposite directions." }
     ]
   },
   {
@@ -69,10 +63,8 @@ const DSA_DATA = [
     ],
     notes: "Three cases: current ends before new starts (add current as-is), current starts after new ends (flush newInterval first then add current), or overlap (expand newInterval bounds with min/max). For overlap: newInterval.start = min(both starts), newInterval.end = max(both ends). After the loop, flush newInterval if it was never added.",
     flashcards: [
-      { q: "What are the three cases when inserting an interval into a sorted non-overlapping list?", a: "Entirely before (cur.end < new.start), entirely after (cur.start > new.end), or overlapping — merge by expanding newInterval bounds." },
-      { q: "How do you detect that two intervals do NOT overlap?", a: "They don't overlap if cur.end < new.start (current is before) or cur.start > new.end (current is after)." },
-      { q: "How do you merge an overlapping interval into newInterval?", a: "newInterval.start = min(newInterval.start, cur.start); newInterval.end = max(newInterval.end, cur.end)." },
-      { q: "Time and space complexity of insert interval?", a: "O(n) time, O(n) space for the output array." }
+      { q: "[Insert Interval] Three cases for each existing interval when inserting a new one — what are they and what do you do?", a: "Before (cur.end < new.start) → add cur. After (cur.start > new.end) → flush new first, then add cur. Overlap → expand new: start = min(both), end = max(both)." },
+      { q: "[Insert Interval] What trailing edge case must you handle after the loop?", a: "If newInterval was never flushed (no 'after' case was ever hit), add it at the end of the result." }
     ]
   },
   {
@@ -85,10 +77,8 @@ const DSA_DATA = [
     stuckPoints: [],
     notes: "Sort all intervals by start time so overlapping ones are always adjacent. Push the first interval into the result, then scan: if cur.start <= last result end, extend the end to max(curEnd, prevEnd). Otherwise push the current interval as a new entry. Sorting is what makes a single linear pass sufficient.",
     flashcards: [
-      { q: "Why must intervals be sorted before merging?", a: "Sorting by start time ensures all potentially overlapping intervals are adjacent, enabling a single linear pass." },
-      { q: "What is the overlap condition in Merge Intervals?", a: "cur.start <= prevEnd — current interval starts at or before the last merged interval ends." },
-      { q: "How do you extend a merged interval when overlap is found?", a: "ans.back()[1] = max(ans.back()[1], curEnd) — take the further of the two end points." },
-      { q: "Time and space complexity of Merge Intervals?", a: "O(n log n) for sorting, O(n) space for output." }
+      { q: "[Merge Intervals] Core approach: why sort first, what is the merge condition, and how do you extend?", a: "Sort by start so overlapping intervals are adjacent. Merge when cur.start <= last result end. Extend: last.end = max(last.end, cur.end) — not just cur.end, in case cur is fully contained." },
+      { q: "[Merge Intervals] Why use max(prevEnd, curEnd) when extending, not just curEnd?", a: "The current interval may be fully contained inside the last merged one — curEnd could be smaller than prevEnd and would incorrectly shrink it." }
     ]
   },
   {
@@ -104,10 +94,8 @@ const DSA_DATA = [
     ],
     notes: "Sort by start time. When cur.start < prevEnd (overlap), remove the interval with the larger end — the smaller end causes fewer future conflicts. When no overlap, update prevEnd to curEnd. No actual deletion needed — count overlaps and track prevEnd virtually.",
     flashcards: [
-      { q: "In Non-Overlapping Intervals, which interval should you remove when two overlap?", a: "Remove the one with the larger end — keeping the smaller end greedily reduces the chance of future overlaps." },
-      { q: "Why don't you need to actually delete intervals from the array?", a: "You only need the removal count; track prevEnd virtually and increment a counter when overlap is detected." },
-      { q: "What is the overlap condition in Non-Overlapping Intervals?", a: "cur.start < prevEnd — strict less than, because touching intervals [1,2],[2,3] are not overlapping." },
-      { q: "Time and space complexity of Non-Overlapping Intervals?", a: "O(n log n) for sorting, O(1) extra space." }
+      { q: "[Non-Overlapping Intervals] To minimise removals: when two intervals overlap, which do you keep and why?", a: "Keep the one with the smaller end — it conflicts with fewer future intervals (greedy earliest end). Remove the larger-end one." },
+      { q: "[Non-Overlapping Intervals] Why is no deletion needed, and what is the exact overlap condition?", a: "Only the count matters — track prevEnd virtually. Overlap: cur.start < prevEnd (strict less than; touching intervals like [1,2],[2,3] are not overlapping)." }
     ]
   },
   {
@@ -120,10 +108,8 @@ const DSA_DATA = [
     stuckPoints: [],
     notes: "Brute force: vector of rooms, scan all rooms per interval to find a free one — O(n²). Optimal: sort by start time, use a min-heap of end times. For each interval: if heap.top() <= cur.start, reuse that room (pop old end, push new end). Otherwise allocate a new room (push new end). Answer = heap size — O(n log n) time, O(n) space.",
     flashcards: [
-      { q: "What data structure gives the optimal O(n log n) solution for Meeting Rooms II?", a: "A min-heap of end times — always check if the earliest-ending room is free before allocating a new one." },
-      { q: "What is the condition to reuse an existing room in Meeting Rooms II?", a: "cur.start >= heap.top() — the meeting starts at or after the earliest-finishing room is free." },
-      { q: "Why does scanning a vector of rooms give O(n²) instead of O(n log n)?", a: "Finding the minimum end time in a vector is O(n) per interval; a min-heap reduces this to O(log n)." },
-      { q: "Time and space complexity of the optimal Meeting Rooms II solution?", a: "O(n log n) time for sorting and heap operations, O(n) space for the heap." }
+      { q: "[Meeting Rooms II] Find minimum rooms needed: what is the O(n log n) min-heap approach?", a: "Sort by start. Min-heap stores end times. For each meeting: if heap.top() <= cur.start, reuse that room (pop, push new end). Else push new end. Answer = heap size." },
+      { q: "[Meeting Rooms II] Why does a vector of rooms give O(n²) while a min-heap gives O(n log n)?", a: "Finding the earliest-ending room in a vector requires scanning all of them — O(n) per meeting. A min-heap gives O(log n) access to the minimum end time." }
     ]
   },
   {
@@ -136,10 +122,8 @@ const DSA_DATA = [
     stuckPoints: [],
     notes: "Canonical O(n) approach: track minPrice seen so far; at each step maxProfit = max(maxProfit, price - minPrice). Two-pointer alternative: tail = buy day (seeks minimum), head scans forward while prices rise. Both are O(n) time, O(1) space.",
     flashcards: [
-      { q: "What is the simplest O(n) approach for Best Time to Buy and Sell Stock?", a: "Track minPrice seen so far; for each price, maxProfit = max(maxProfit, price - minPrice)." },
-      { q: "When should the buy pointer advance in this problem?", a: "When the current price is lower than the current buy price — reset buy to the current position." },
-      { q: "Why initialise maxProfit to 0 and not nums[0]?", a: "You can always choose not to transact, so 0 is the minimum possible profit." },
-      { q: "Time and space complexity of Best Time to Buy and Sell Stock?", a: "O(n) time, O(1) space." }
+      { q: "[Best Time to Buy and Sell Stock] Single buy-sell for max profit: what O(n) O(1) approach works?", a: "Track minPrice seen so far. At each price: maxProfit = max(maxProfit, price - minPrice). Update minPrice each step." },
+      { q: "[Best Time to Buy and Sell Stock] Why initialise maxProfit to 0 rather than INT_MIN?", a: "Not transacting is always valid — 0 profit is achievable. INT_MIN would force a trade even when all prices fall." }
     ]
   },
   {
@@ -152,10 +136,8 @@ const DSA_DATA = [
     stuckPoints: [],
     notes: "Kadane's: at each element, curSum = max(curSum + nums[i], nums[i]) — extend current subarray or start fresh, whichever is larger. Track the global max: maxSum = max(maxSum, curSum). Initialise maxSum to nums[0], not 0 — otherwise all-negative arrays return 0 incorrectly. Two-pointer also works but Kadane's is simpler and cleaner.",
     flashcards: [
-      { q: "What is the core decision in Kadane's algorithm at each element?", a: "Extend the current subarray (curSum + nums[i]) or start fresh (nums[i]) — whichever is larger." },
-      { q: "Kadane's recurrence for Maximum Subarray?", a: "curSum = max(curSum + nums[i], nums[i]); maxSum = max(maxSum, curSum)." },
-      { q: "Why must maxSum be initialised to nums[0] and not 0?", a: "For all-negative arrays, 0 would be wrongly returned; the actual answer is the least-negative element." },
-      { q: "Time and space complexity of Kadane's algorithm?", a: "O(n) time, O(1) space." }
+      { q: "[Maximum Subarray — Kadane's] At each element, what is the decision and the recurrence?", a: "Extend or restart: curSum = max(nums[i], curSum + nums[i]). Track maxSum = max(maxSum, curSum). Initialise maxSum = nums[0], not 0." },
+      { q: "[Maximum Subarray] Why initialise maxSum to nums[0] instead of 0?", a: "For all-negative arrays, 0 would be wrongly returned — the best subarray is the least-negative element, not an empty subarray." }
     ]
   },
   {
@@ -171,10 +153,8 @@ const DSA_DATA = [
     ],
     notes: "Track both max and min product because a negative flips the sign — min can become max and vice versa. For a positive element: multiply by max continuation to extend max, multiply by min continuation to extend min. For a negative element: the logic reverses — multiply by min continuation to get max, multiply by max continuation to get min. Iterative Kadane's variant: curMax = max(nums[i], curMax*nums[i], curMin*nums[i]); curMin = min of the same three — O(n) time, O(1) space. --- 2026-06-17 --- Iterative approach confirmed: keep curMax and curMin at each index. At i+1, newMax = max(nums[i], curMax*nums[i], curMin*nums[i]). NewMin = min of same three. Maintain a running answer max.",
     flashcards: [
-      { q: "Why must you track both max and min product in Maximum Product Subarray?", a: "A negative minimum can become the maximum when multiplied by another negative — min and max can flip at each step." },
-      { q: "What happens to max and min when the current element is negative?", a: "They swap roles — multiply the current element by curMin to get the new curMax, and by curMax to get the new curMin." },
-      { q: "What is the iterative Kadane's variant for Maximum Product Subarray?", a: "curMax = max(nums[i], curMax*nums[i], curMin*nums[i]); curMin = min of the same three. Track global max." },
-      { q: "Time and space complexity of Maximum Product Subarray?", a: "O(n) time; O(n) with memoisation, O(1) with the iterative approach." }
+      { q: "[Maximum Product Subarray] Why track both curMax and curMin, and what are the three candidates each step?", a: "A negative curMin × negative element can flip to the new maximum. Three candidates: nums[i], nums[i]*prevMax, nums[i]*prevMin. curMax = max of three; curMin = min of three." },
+      { q: "[Maximum Product Subarray vs Maximum Subarray] What makes product harder than sum?", a: "Negatives flip sign — a very negative product can become the largest when multiplied by another negative. For sum only curMax matters; for product you need both curMax and curMin." }
     ]
   }
 ];
