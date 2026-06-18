@@ -156,5 +156,35 @@ const DSA_DATA = [
       { q: "[Maximum Product Subarray] Why track both curMax and curMin, and what are the three candidates each step?", a: "A negative curMin × negative element can flip to the new maximum. Three candidates: nums[i], nums[i]*prevMax, nums[i]*prevMin. curMax = max of three; curMin = min of three." },
       { q: "[Maximum Product Subarray vs Maximum Subarray] What makes product harder than sum?", a: "Negatives flip sign — a very negative product can become the largest when multiplied by another negative. For sum only curMax matters; for product you need both curMax and curMin." }
     ]
+  },
+  {
+    id: "find-minimum-in-rotated-sorted-array",
+    title: "Find Minimum in Rotated Sorted Array",
+    url: "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/description/",
+    topic: "Binary Search",
+    date: "2026-06-18",
+    patterns: ["Rotated Array Binary Search", "Section Identification", "Left-Right Comparison"],
+    stuckPoints: [],
+    notes: "A rotated sorted array has two individually increasing sections — visualise them as two humps on a graph. Use binary search for O(log n). Check nums[l] > nums[r] to detect rotation in current window. When rotation exists, determine which section mid falls in: nums[mid] >= nums[l] means mid is in the left (higher) section, so move l = mid+1; otherwise mid is in the right (lower) section, so r = mid. When nums[l] <= nums[r] the window is fully sorted — minimum is at l, so r = mid.",
+    flashcards: [
+      { q: "[Find Minimum in Rotated Sorted Array] What are the two cases in binary search and what do you do in each?", a: "If nums[l] <= nums[r]: window is sorted, minimum is at l (r = mid). If nums[l] > nums[r]: rotation detected — if nums[mid] >= nums[l], mid is in the left section (l = mid+1); else mid is in the right section (r = mid)." },
+      { q: "[Find Minimum in Rotated Sorted Array] How do you tell which sorted section mid is in when rotation is detected?", a: "Compare nums[mid] with nums[l]: if nums[mid] >= nums[l], mid is on the higher left section — minimum is further right. Otherwise mid is on the lower right section — minimum is at mid or to its left." },
+      { q: "[Find Minimum in Rotated Sorted Array] Why use r = mid instead of r = mid - 1 when narrowing right?", a: "Mid itself could be the minimum — discarding it with mid-1 would lose the answer. Use r = mid to keep it in range." }
+    ]
+  },
+  {
+    id: "search-in-rotated-sorted-array",
+    title: "Search in Rotated Sorted Array",
+    url: "https://leetcode.com/problems/search-in-rotated-sorted-array/description/",
+    topic: "Binary Search",
+    date: "2026-06-18",
+    patterns: ["Find Inflection Point First", "Target-Based Subarray Selection", "Two-Pass Binary Search"],
+    stuckPoints: [],
+    notes: "Find the inflection point (minimum) using the exact same binary search as LC 153. Use target >= nums[0] to decide which sorted subarray contains the target — if true, search the left section [0, inflection-1]; otherwise search the right section [inflection, n-1]. Handle the edge case: if inflection is 0 (no rotation), search the full array. Run standard binary search on the chosen subarray.",
+    flashcards: [
+      { q: "[Search in Rotated Sorted Array] What is the two-step approach to searching in a rotated array?", a: "Step 1: Find the inflection point (minimum index) using rotated binary search. Step 2: Use target >= nums[0] to pick the correct sorted half, then run standard binary search on it." },
+      { q: "[Search in Rotated Sorted Array] How do you decide which subarray to search after finding the inflection point?", a: "If target >= nums[0], target is in the left section [0, inflection-1]. Otherwise it's in the right section [inflection, n-1]. Edge case: if inflection is 0 (no rotation), search the full array." },
+      { q: "[Search in Rotated Sorted Array vs Find Minimum in Rotated Sorted Array] How does this problem build on LC 153?", a: "The inflection-point logic is identical to LC 153. Once you have the pivot index, the problem reduces to a standard binary search on the correct sorted half." }
+    ]
   }
 ];
