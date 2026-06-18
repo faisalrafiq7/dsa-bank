@@ -186,5 +186,22 @@ const DSA_DATA = [
       { q: "[Search in Rotated Sorted Array] How do you decide which subarray to search after finding the inflection point?", a: "If target >= nums[0], target is in the left section [0, inflection-1]. Otherwise it's in the right section [inflection, n-1]. Edge case: if inflection is 0 (no rotation), search the full array." },
       { q: "[Search in Rotated Sorted Array vs Find Minimum in Rotated Sorted Array] How does this problem build on LC 153?", a: "The inflection-point logic is identical to LC 153. Once you have the pivot index, the problem reduces to a standard binary search on the correct sorted half." }
     ]
+  },
+  {
+    id: "3sum",
+    title: "3Sum",
+    url: "https://leetcode.com/problems/3sum/description/",
+    topic: "Two Pointers",
+    date: "2026-06-19",
+    patterns: ["Fix One, Two-Pointer Rest", "Duplicate Skip", "Sort-First Two Pointer"],
+    stuckPoints: [
+      "Got stuck preventing duplicate triplets in the answer.",
+      "Three separate skips are needed: skip i if nums[i] == nums[i-1], and after each found triplet advance l and retreat r past all equal elements."
+    ],
+    notes: "Sort the array first. Fix each index i and set target = -nums[i]. Use two pointers l = i+1 and r = n-1 to find pairs summing to the target. Reduce or increase pointers based on the current sum. Three duplicate skips are required: skip i if it equals the previous element; after a match, skip l forward while nums[l] == leftElm and skip r backward while nums[r] == rightElm.",
+    flashcards: [
+      { q: "[3Sum] What is the O(n²) approach — how do you reduce the brute-force O(n³)?", a: "Sort the array. Fix each i as one element (target = -nums[i]), then use two pointers l=i+1 and r=n-1 to find the pair summing to target in O(n). Repeat for all i." },
+      { q: "[3Sum] How do you prevent duplicate triplets across all three positions?", a: "Three skips: (1) skip i if nums[i] == nums[i-1]; (2) after a match, advance l past all elements equal to nums[l]; (3) retreat r past all elements equal to nums[r]." }
+    ]
   }
 ];
