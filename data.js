@@ -203,5 +203,19 @@ const DSA_DATA = [
       { q: "[3Sum] What is the O(n²) approach — how do you reduce the brute-force O(n³)?", a: "Sort the array. Fix each i as one element (target = -nums[i]), then use two pointers l=i+1 and r=n-1 to find the pair summing to target in O(n). Repeat for all i." },
       { q: "[3Sum] How do you prevent duplicate triplets across all three positions?", a: "Three skips: (1) skip i if nums[i] == nums[i-1]; (2) after a match, advance l past all elements equal to nums[l]; (3) retreat r past all elements equal to nums[r]." }
     ]
+  },
+  {
+    id: "container-with-most-water",
+    title: "Container With Most Water",
+    url: "https://leetcode.com/problems/container-with-most-water/description/",
+    topic: "Two Pointers",
+    date: "2026-06-20",
+    patterns: ["Two Pointer Shrink", "Greedy Pointer Movement"],
+    stuckPoints: [],
+    notes: "Use two pointers at both ends to maximize area. Area = base * min(height[l], height[r]) where base = r - l. Move the pointer with the shorter height inward. Moving the taller pointer can only decrease area — height is still capped by the shorter side but the base shrinks. Moving the shorter pointer gives a chance to find a taller wall. O(n) time, O(1) space.",
+    flashcards: [
+      { q: "[Container With Most Water] Two-pointer approach: start positions, what you calculate, and what to do each step?", a: "Start l=0, r=n-1. Area = (r-l) * min(height[l], height[r]). Move the pointer with the shorter height inward. Track running max." },
+      { q: "[Container With Most Water] Why move the shorter pointer and not the taller one?", a: "Moving the taller pointer: height is still capped by the shorter side and base shrinks — area can only decrease. Moving the shorter gives a chance to find a taller wall." }
+    ]
   }
 ];
