@@ -205,6 +205,35 @@ const DSA_DATA = [
     ]
   },
   {
+    id: "trapping-rain-water",
+    title: "Trapping Rain Water",
+    url: "https://leetcode.com/problems/trapping-rain-water/description/",
+    topic: "Two Pointers",
+    date: "2026-06-19",
+    patterns: ["Greedy Two Pointer Shrink", "Running Max Tracking", "Bounded Water Calculation"],
+    stuckPoints: [],
+    notes: "Water trapped at each cell = min(maxLeft, maxRight) - height[cell]. Use two pointers l and r. When height[l] < height[r], the right boundary is tall enough — water on the left is capped by curMaxL, so process left (add curMaxL - height[l], advance l). When height[l] >= height[r], process right symmetrically. Track running maxL and maxR as pointers move inward.",
+    flashcards: [
+      { q: "[Trapping Rain Water] Two-pointer O(n) approach: how do you know how much water each cell traps?", a: "Water at a cell = min(maxLeft, maxRight) - height. When height[l] < height[r], right boundary is guaranteed tall enough — process left using curMaxL as the cap (add curMaxL - height[l], advance l). Mirror for right side." },
+      { q: "[Trapping Rain Water] Why can you safely process the left side when height[l] < height[r]?", a: "The right wall is at least height[r] tall, so the water cap on the left depends only on curMaxL — you don't need to know the exact right max. The smaller side always determines the bottleneck." },
+      { q: "[Trapping Rain Water vs Container With Most Water] What is the key difference in what you calculate?", a: "Container: one rectangle using the shorter wall, move the shorter pointer. Trapping: per-cell water = min(maxL, maxR) - height — process whichever side has the smaller boundary since that determines the water cap." }
+    ]
+  },
+  {
+    id: "longest-substring-without-repeating-characters",
+    title: "Longest Substring Without Repeating Characters",
+    url: "https://leetcode.com/problems/longest-substring-without-repeating-characters/description/",
+    topic: "Sliding Window",
+    date: "2026-06-19",
+    patterns: ["Expand-Shrink Window", "Frequency Map Window", "Running Max Length"],
+    stuckPoints: [],
+    notes: "Use two pointers (head, tail) as the window boundaries and a frequency map to track characters in the current window. Expand head while the next character has freq 0. When blocked, shrink from tail (decrement freq, advance tail). Track the maximum window size seen. O(n) time since each character enters and leaves the window at most once.",
+    flashcards: [
+      { q: "[Longest Substring Without Repeating Characters] Sliding window approach: how do you expand and shrink, and what tracks uniqueness?", a: "Frequency map tracks chars in window. Expand head while next char has freq 0. When blocked, shrink from tail (decrement freq, advance tail). Track max window size. O(n) — each char enters and leaves at most once." },
+      { q: "[Longest Substring Without Repeating Characters] When head is blocked by a repeat, why shrink from tail rather than jump past the duplicate?", a: "Shrinking from tail is O(1) per step and preserves as much of the valid window as possible. Jumping (using a char→index map) also works and avoids shrinking one-by-one, but both approaches are O(n)." }
+    ]
+  },
+  {
     id: "container-with-most-water",
     title: "Container With Most Water",
     url: "https://leetcode.com/problems/container-with-most-water/description/",
